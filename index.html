@@ -25,6 +25,9 @@
     <meta name="twitter:description" content="Deskripsi film placeholder">
     <meta name="twitter:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=Poster%20Film">
 
+    <!-- Favicon untuk browser -->
+    <link rel="icon" href="https://placehold.co/32x32/000000/FFFFFF?text=SF" type="image/png">
+
     <!-- Muat font Roboto dari Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,11 +39,6 @@
         body {
             transition: background-color 0.3s, color 0.3s;
             font-family: 'Roboto', sans-serif;
-        }
-        /* Gaya untuk tema gelap */
-        .dark {
-            background-color: #1a202c;
-            color: #e2e8f0;
         }
         /* Gaya responsif untuk iframe dan gambar */
         .media-container {
@@ -79,18 +77,11 @@
             margin-right: 0.5rem;
             margin-bottom: 0.5rem;
         }
-        .dark .genre-tag {
-            background-color: #4a5568;
-            color: #e2e8f0;
-        }
         /* Gaya untuk gambar yang dimuat secara malas (lazy-loaded) */
         img.lazy {
             background-color: #e2e8f0;
             opacity: 0.5;
             transition: opacity 0.5s ease-in-out;
-        }
-        .dark img.lazy {
-            background-color: #4a5568;
         }
         img.lazy.loaded {
             opacity: 1;
@@ -152,15 +143,15 @@
             <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
                 <!-- Navigasi -->
                 <nav class="flex-grow flex justify-center md:justify-start">
-                    <button id="movies-nav" class="px-3 py-2 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200">Film</button>
-                    <button id="tv-shows-nav" class="px-3 py-2 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200">Acara TV</button>
+                    <button id="movies-nav" class="px-3 py-2 text-lg font-medium text-gray-700 hover:text-blue-500 transition-colors duration-200">Film</button>
+                    <button id="tv-shows-nav" class="px-3 py-2 text-lg font-medium text-gray-700 hover:text-blue-500 transition-colors duration-200">Acara TV</button>
                 </nav>
 
                 <!-- Kotak pencarian dan tombol toggle tema -->
                 <div class="flex items-center space-x-4 w-full md:w-auto">
                     <!-- Input pencarian -->
-                    <form id="search-form" class="flex rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden w-full">
-                        <input type="text" id="search-input" placeholder="Cari film..." class="px-4 py-2 bg-transparent focus:outline-none w-full text-gray-800 dark:text-gray-200">
+                    <form id="search-form" class="flex rounded-full bg-gray-200 overflow-hidden w-full">
+                        <input type="text" id="search-input" placeholder="Cari film..." class="px-4 py-2 bg-transparent focus:outline-none w-full text-gray-800">
                         <button type="submit" class="p-2 bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -168,21 +159,13 @@
                         </button>
                     </form>
 
-                    <!-- Tombol untuk mengubah tema -->
-                    <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 118.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                        </svg>
-                    </button>
+                    <!-- Tombol untuk mengubah tema - DIHAPUS -->
                 </div>
             </div>
         </header>
 
         <!-- Bagian konten film utama -->
-        <main id="movie-content" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+        <main id="movie-content" class="bg-white p-6 rounded-xl shadow-lg">
             <!-- Konten akan dimuat di sini -->
         </main>
     </div>
@@ -223,26 +206,8 @@
             };
         }
 
-        // Fungsi untuk mengaktifkan/menonaktifkan mode gelap
-        function toggleTheme() {
-            const html = document.documentElement;
-            const isDarkMode = html.classList.toggle('dark');
-            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-            updateThemeIcons(isDarkMode);
-        }
-
-        // Fungsi untuk memperbarui ikon toggle tema
-        function updateThemeIcons(isDarkMode) {
-            const sunIcon = document.getElementById('sun-icon');
-            const moonIcon = document.getElementById('moon-icon');
-            if (isDarkMode) {
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            } else {
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-            }
-        }
+        // FUNGSI TOGGLE TEMA DIHAPUS
+        // FUNGSI UPDATE IKON TEMA DIHAPUS
 
         // Fungsi untuk memperbarui tag meta SEO dan media sosial
         function updateMetaTags(data, type) {
@@ -350,11 +315,11 @@
             categoryContainer.innerHTML = `
                 <h3 class="text-2xl font-bold mb-4">${title}</h3>
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" id="grid-${endpoint}">
-                    ${`<div class="movie-card bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden shadow-md">
-                        <div class="bg-gray-300 dark:bg-gray-600 w-full h-48 sm:h-64 md:h-72 lg:h-96 skeleton-loading"></div>
+                    ${`<div class="movie-card bg-gray-200 rounded-lg overflow-hidden shadow-md">
+                        <div class="bg-gray-300 w-full h-48 sm:h-64 md:h-72 lg:h-96 skeleton-loading"></div>
                         <div class="p-2 text-center">
-                            <div class="bg-gray-300 dark:bg-gray-600 h-4 w-3/4 mx-auto rounded skeleton-loading my-1"></div>
-                            <div class="bg-gray-300 dark:bg-gray-600 h-3 w-1/2 mx-auto rounded skeleton-loading"></div>
+                            <div class="bg-gray-300 h-4 w-3/4 mx-auto rounded skeleton-loading my-1"></div>
+                            <div class="bg-gray-300 h-3 w-1/2 mx-auto rounded skeleton-loading"></div>
                         </div>
                     </div>`.repeat(12)}
                 </div>
@@ -367,28 +332,28 @@
             const content = document.getElementById('movie-content');
             content.innerHTML = `
                 <div class="text-center mb-6">
-                    <div class="bg-gray-300 dark:bg-gray-600 h-10 w-2/3 mx-auto rounded skeleton-loading mb-4"></div>
-                    <div class="bg-gray-300 dark:bg-gray-600 h-6 w-1/2 mx-auto rounded skeleton-loading mb-2"></div>
+                    <div class="bg-gray-300 h-10 w-2/3 mx-auto rounded skeleton-loading mb-4"></div>
+                    <div class="bg-gray-300 h-6 w-1/2 mx-auto rounded skeleton-loading mb-2"></div>
                 </div>
-                <div class="media-container mb-6 bg-gray-300 dark:bg-gray-600 skeleton-loading"></div>
+                <div class="media-container mb-6 bg-gray-300 skeleton-loading"></div>
                 <div class="flex flex-col md:flex-row items-start md:items-stretch gap-6">
-                    <div class="flex-shrink-0 w-full md:w-1/3 lg:w-1/4 bg-gray-300 dark:bg-gray-600 h-96 rounded-lg shadow-md skeleton-loading"></div>
+                    <div class="flex-shrink-0 w-full md:w-1/3 lg:w-1/4 bg-gray-300 h-96 rounded-lg shadow-md skeleton-loading"></div>
                     <div class="flex-1">
-                        <div class="bg-gray-300 dark:bg-gray-600 h-8 w-1/4 rounded mb-4 skeleton-loading"></div>
-                        <div class="bg-gray-300 dark:bg-gray-600 h-4 rounded mb-2 skeleton-loading"></div>
-                        <div class="bg-gray-300 dark:bg-gray-600 h-4 rounded mb-2 skeleton-loading"></div>
-                        <div class="bg-gray-300 dark:bg-gray-600 h-4 rounded mb-2 skeleton-loading"></div>
-                        <div class="bg-gray-300 dark:bg-gray-600 h-4 rounded mb-6 w-3/4 skeleton-loading"></div>
+                        <div class="bg-gray-300 h-8 w-1/4 rounded mb-4 skeleton-loading"></div>
+                        <div class="bg-gray-300 h-4 rounded mb-2 skeleton-loading"></div>
+                        <div class="bg-gray-300 h-4 rounded mb-2 skeleton-loading"></div>
+                        <div class="bg-gray-300 h-4 rounded mb-2 skeleton-loading"></div>
+                        <div class="bg-gray-300 h-4 rounded mb-6 w-3/4 skeleton-loading"></div>
                         
-                        <div class="bg-gray-300 dark:bg-gray-600 h-8 w-1/4 rounded mb-4 skeleton-loading"></div>
+                        <div class="bg-gray-300 h-8 w-1/4 rounded mb-4 skeleton-loading"></div>
                         <div class="flex flex-wrap gap-2 mb-6">
-                            ${`<div class="bg-gray-300 dark:bg-gray-600 h-6 w-20 rounded-full skeleton-loading"></div>`.repeat(3)}
+                            ${`<div class="bg-gray-300 h-6 w-20 rounded-full skeleton-loading"></div>`.repeat(3)}
                         </div>
                     </div>
                 </div>
                 <div class="mt-8">
-                    <div class="bg-gray-300 dark:bg-gray-600 h-8 w-1/5 rounded mb-4 skeleton-loading"></div>
-                    <div class="media-container bg-gray-300 dark:bg-gray-600 skeleton-loading"></div>
+                    <div class="bg-gray-300 h-8 w-1/5 rounded mb-4 skeleton-loading"></div>
+                    <div class="media-container bg-gray-300 skeleton-loading"></div>
                 </div>
             `;
         }
@@ -460,9 +425,9 @@
 
             // Tampilkan ulasan (ambil 3 ulasan teratas)
             const reviewList = (reviews.results && reviews.results.length > 0) ? reviews.results.slice(0, 3).map(review => `
-                <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow mb-4 review-card-hover">
+                <div class="bg-gray-100 p-4 rounded-lg shadow mb-4 review-card-hover">
                     <p class="font-semibold text-sm">${review.author}</p>
-                    <p class="text-sm italic text-gray-600 dark:text-gray-400 text-justify line-clamp-3">${review.content}</p>
+                    <p class="text-sm italic text-gray-600 text-justify line-clamp-3">${review.content}</p>
                 </div>
             `).join('') : '';
 
@@ -492,7 +457,7 @@
                 <!-- Judul, Rating, dan Slogan Kontainer -->
                 <div class="text-center mb-6">
                     <!-- Judul Film (h1) -->
-                    <h1 class="text-3xl md:text-5xl font-extrabold text-blue-600 dark:text-blue-400">
+                    <h1 class="text-3xl md:text-5xl font-extrabold text-blue-600">
                         ${title}
                     </h1>
                     <!-- Rating TMDB dan Skor Pengguna (h2) -->
@@ -504,7 +469,7 @@
                         <span class="text-gray-500 font-normal">(${item.vote_count ? item.vote_count.toLocaleString() : '0'} suara)</span>
                     </h2>
                     <!-- Slogan (h3) -->
-                    <h3 class="text-lg md:text-xl font-medium italic text-gray-600 dark:text-gray-400">
+                    <h3 class="text-lg md:text-xl font-medium italic text-gray-600">
                         ${item.tagline ? `"${item.tagline}"` : ''}
                     </h3>
                     
@@ -547,14 +512,14 @@
                     <!-- Detail film di kanan -->
                     <div class="flex-1">
                         <h3 class="text-2xl font-bold mt-2 mb-2">Sinopsis</h3>
-                        <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed text-justify">
+                        <p class="text-gray-700 mb-4 leading-relaxed text-justify">
                             ${item.overview || 'Sinopsis tidak tersedia.'}
                         </p>
                         
                         <!-- Genre dalam daftar -->
                         <h3 class="text-xl font-bold mb-2">Genre</h3>
                         <ul class="flex flex-wrap gap-2 mb-6">
-                            ${genresHtml || '<li class="text-gray-500 dark:text-gray-400">Tidak ada genre.</li>'}
+                            ${genresHtml || '<li class="text-gray-500">Tidak ada genre.</li>'}
                         </ul>
                         
                         <!-- Informasi Tambahan -->
@@ -566,7 +531,7 @@
                                     </svg>
                                     <span>Tanggal Rilis</span>
                                 </h4>
-                                <p class="text-gray-700 dark:text-gray-300">${releaseDate || 'N/A'}</p>
+                                <p class="text-gray-700">${releaseDate || 'N/A'}</p>
                             </div>
                             <div>
                                 <h4 class="font-semibold text-lg flex items-center space-x-2">
@@ -575,7 +540,7 @@
                                     </svg>
                                     <span>Durasi</span>
                                 </h4>
-                                <p class="text-gray-700 dark:text-gray-300">${item.runtime ? `${item.runtime} mnt` : 'N/A'}</p>
+                                <p class="text-gray-700">${item.runtime ? `${item.runtime} mnt` : 'N/A'}</p>
                             </div>
                             <div>
                                 <h4 class="font-semibold text-lg flex items-center space-x-2">
@@ -584,7 +549,7 @@
                                     </svg>
                                     <span>Kategori Audiens</span>
                                 </h4>
-                                <p class="text-gray-700 dark:text-gray-300">${certification}</p>
+                                <p class="text-gray-700">${certification}</p>
                             </div>
                             <div>
                                 <h4 class="font-semibold text-lg flex items-center space-x-2">
@@ -593,7 +558,7 @@
                                     </svg>
                                     <span>Bahasa Asli</span>
                                 </h4>
-                                <p class="text-gray-700 dark:text-gray-300">${getLanguageName(item.original_language)}</p>
+                                <p class="text-gray-700">${getLanguageName(item.original_language)}</p>
                             </div>
                             <div>
                                 <h4 class="font-semibold text-lg flex items-center space-x-2">
@@ -602,7 +567,7 @@
                                     </svg>
                                     <span>Anggaran</span>
                                 </h4>
-                                <p class="text-gray-700 dark:text-gray-300">${formatCurrency(item.budget)}</p>
+                                <p class="text-gray-700">${formatCurrency(item.budget)}</p>
                             </div>
                             <div>
                                 <h4 class="font-semibold text-lg flex items-center space-x-2">
@@ -611,7 +576,7 @@
                                     </svg>
                                     <span>Pendapatan</span>
                                 </h4>
-                                <p class="text-gray-700 dark:text-gray-300">${formatCurrency(item.revenue)}</p>
+                                <p class="text-gray-700">${formatCurrency(item.revenue)}</p>
                             </div>
                             <!-- Detail Baru: Perusahaan Produksi -->
                             <div>
@@ -621,7 +586,7 @@
                                     </svg>
                                     <span>Perusahaan Produksi</span>
                                 </h4>
-                                <p class="text-gray-700 dark:text-gray-300">${productionCompanies}</p>
+                                <p class="text-gray-700">${productionCompanies}</p>
                             </div>
                             <!-- Detail Baru: Status -->
                             <div>
@@ -631,7 +596,7 @@
                                     </svg>
                                     <span>Status</span>
                                 </h4>
-                                <p class="text-gray-700 dark:text-gray-300">${item.status || 'N/A'}</p>
+                                <p class="text-gray-700">${item.status || 'N/A'}</p>
                             </div>
                             <!-- Detail Baru: Judul Asli -->
                             <div>
@@ -641,7 +606,7 @@
                                     </svg>
                                     <span>Judul Asli</span>
                                 </h4>
-                                <p class="text-gray-700 dark:text-gray-300">${item.original_title || item.original_name || 'N/A'}</p>
+                                <p class="text-gray-700">${item.original_title || item.original_name || 'N/A'}</p>
                             </div>
                         </div>
 
@@ -650,17 +615,17 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <h4 class="font-semibold text-lg">Sutradara</h4>
-                                <p class="text-gray-700 dark:text-gray-300">
+                                <p class="text-gray-700">
                                     ${director ? director.name : 'N/A'}
                                 </p>
                             </div>
                             <div>
                                 <h4 class="font-semibold text-lg">Pemeran Utama</h4>
-                                <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-gray-700 dark:text-gray-300">
+                                <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-gray-700">
                                     ${cast.length > 0 ? cast.map(actor => `
                                         <span class="font-medium">${actor.name}</span>
                                         <span class="italic">${actor.character}</span>
-                                    `).join('') : '<span class="col-span-2 text-gray-500 dark:text-gray-400">Tidak ada pemeran utama.</span>'}
+                                    `).join('') : '<span class="col-span-2 text-gray-500">Tidak ada pemeran utama.</span>'}
                                 </div>
                             </div>
                         </div>
@@ -680,14 +645,14 @@
                             </iframe>
                         </div>
                     ` : `
-                        <p class="text-center text-gray-500 dark:text-gray-400">Trailer tidak tersedia untuk film ini.</p>
+                        <p class="text-center text-gray-500">Trailer tidak tersedia untuk film ini.</p>
                     `}
                 </div>
 
                 <!-- Bagian Ulasan Pengguna -->
                 <div class="mt-8">
                     <h3 class="text-2xl font-bold mb-4">Ulasan Pengguna</h3>
-                    ${reviewList || '<p class="text-center text-gray-500 dark:text-gray-400">Belum ada ulasan untuk film ini.</p>'}
+                    ${reviewList || '<p class="text-center text-gray-500">Belum ada ulasan untuk film ini.</p>'}
                 </div>
             `;
 
@@ -710,7 +675,7 @@
 
             // Jika ini bukan halaman pertama, tambahkan indikator "Memuat..."
             if (page > 1) {
-                grid.insertAdjacentHTML('beforeend', `<div class="w-full text-center py-4 col-span-full text-gray-500 dark:text-gray-400" id="loading-more-${endpoint}">Memuat...</div>`);
+                grid.insertAdjacentHTML('beforeend', `<div class="w-full text-center py-4 col-span-full text-gray-500" id="loading-more-${endpoint}">Memuat...</div>`);
             }
             
             try {
@@ -736,7 +701,7 @@
                 }
 
                 // Render konten. Ambil 12 film pertama jika ini adalah halaman pertama.
-                const itemsToRender = data.results ? (page === 1 ? data.results.slice(0, 12) : data.results) : []; // Perbaikan: Tambahkan pemeriksaan null/undefined
+                const itemsToRender = data.results ? (page === 1 ? data.results.slice(0, 12) : data.results) : []; 
                 renderListItems(itemsToRender, type, endpoint);
                 
                 // Perbarui tombol "Muat Lebih Banyak"
@@ -763,7 +728,7 @@
                     loadingMore.textContent = 'Gagal memuat.';
                 } else if (page === 1) {
                     // Tampilkan pesan kesalahan di dalam kontainer kategori
-                    categoryContainer.innerHTML = `<p class="text-center text-red-500 dark:text-red-400">Gagal memuat daftar ${title}. Silakan periksa koneksi internet Anda.</p>`;
+                    categoryContainer.innerHTML = `<p class="text-center text-red-500">Gagal memuat daftar ${title}. Silakan periksa koneksi internet Anda.</p>`;
                 }
             }
         }
@@ -783,7 +748,7 @@
                 `;
                 const titleText = item.title || item.name;
                 const cardHtml = `
-                    <div class="movie-card bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden shadow-md" onclick="fetchContentDetails(${item.id}, '${type}')">
+                    <div class="movie-card bg-gray-200 rounded-lg overflow-hidden shadow-md" onclick="fetchContentDetails(${item.id}, '${type}')">
                         <img class="w-full h-auto object-cover lazy"
                              data-src="${posterUrl}"
                              srcset="${posterSrcset}"
@@ -791,7 +756,7 @@
                              alt="Poster ${titleText}">
                         <div class="p-2 text-center">
                             <h4 class="font-semibold text-sm truncate">${titleText}</h4>
-                            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">${item.vote_average ? item.vote_average.toFixed(1) : 'N/A'}/10</p>
+                            <p class="text-xs text-gray-600 mt-1">${item.vote_average ? item.vote_average.toFixed(1) : 'N/A'}/10</p>
                         </div>
                     </div>
                 `;
@@ -853,7 +818,7 @@
                     renderListItems(movieResults.results.slice(0, 12), 'movie', 'search-movies');
                 } else {
                     const movieCategoryContainer = document.getElementById('category-search-movies');
-                    movieCategoryContainer.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400 mb-8">Tidak ada film yang ditemukan untuk "${query}".</p>`;
+                    movieCategoryContainer.innerHTML = `<p class="text-center text-gray-500 mb-8">Tidak ada film yang ditemukan untuk "${query}".</p>`;
                 }
                 
                 // Render hasil acara TV (hanya 12 acara TV pertama)
@@ -866,7 +831,7 @@
                     renderListItems(tvResults.results.slice(0, 12), 'tv', 'search-tv');
                 } else {
                     const tvCategoryContainer = document.getElementById('category-search-tv');
-                    tvCategoryContainer.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400">Tidak ada acara TV yang ditemukan untuk "${query}".</p>`;
+                    tvCategoryContainer.innerHTML = `<p class="text-center text-gray-500">Tidak ada acara TV yang ditemukan untuk "${query}".</p>`;
                 }
 
             } catch (error) {
@@ -880,9 +845,9 @@
             const content = document.getElementById('movie-content');
             content.innerHTML = `
                 <h1 class="text-3xl font-bold text-center mb-4">Selamat datang di Streamflix Now!</h1>
-                <p class="text-center text-lg text-gray-600 dark:text-gray-400">Jelajahi film dan acara TV terbaik dari seluruh dunia. Gunakan navigasi di atas untuk memulai.</p>
+                <p class="text-center text-lg text-gray-600">Jelajahi film dan acara TV terbaik dari seluruh dunia. Gunakan navigasi di atas untuk memulai.</p>
                 <div class="mt-8 flex justify-center">
-                    <img src="https://placehold.co/800x400/2f3a47/ffffff?text=Streamflix Now" alt="Selamat datang di Streamflix Now" class="rounded-xl shadow-lg">
+                    <img src="https://live.staticflickr.com/65535/54695504172_16d8127e7b_b.jpg" alt="Selamat datang di Streamflix Now" class="rounded-xl shadow-lg w-full max-w-2xl h-auto">
                 </div>
             `;
         }
@@ -925,19 +890,9 @@
 
         // Logika utama saat halaman dimuat
         document.addEventListener('DOMContentLoaded', () => {
-            // Dapatkan preferensi tema dari localStorage
-            const storedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const currentTheme = storedTheme || (prefersDark ? 'dark' : 'light');
-            
-            // Terapkan tema yang disimpan
-            if (currentTheme === 'dark') {
-                document.documentElement.classList.add('dark');
-            }
-            updateThemeIcons(currentTheme === 'dark');
-
-            // Tambahkan event listener untuk tombol tema
-            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            // Hapus preferensi tema yang disimpan dan logika tema gelap/terang
+            localStorage.removeItem('theme'); // Hapus tema yang disimpan jika ada
+            document.documentElement.classList.remove('dark'); // Pastikan tema gelap tidak diterapkan
 
             // Tambahkan event listener untuk navigasi
             document.getElementById('home-button').addEventListener('click', showHomePage);
