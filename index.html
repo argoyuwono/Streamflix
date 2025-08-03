@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Judul Halaman Dinamis -->
-    <title>Situs Film - Template Master</title>
+    <title>Streamflix Now - Film dan Acara Tv</title>
     
     <!-- Deskripsi Meta SEO -->
     <meta name="description" content="Temukan sinopsis, trailer, pemeran, dan detail film-film terbaru.">
@@ -686,9 +686,13 @@
             };
         }
 
-        // Fungsi baru untuk memuat detail konten (tanpa memperbarui URL browser)
+        // Fungsi baru untuk memuat detail konten dan memperbarui URL
         function loadContentDetails(id, type, title) {
-            // Tidak lagi memanggil history.pushState di sini
+            const cleanTitle = cleanTitleForUrl(title);
+            const urlSegment = type === 'movie' ? 'film' : 'acara-tv';
+            // Gunakan URL absolut untuk pushState
+            const newUrl = `${BLOG_URL}${urlSegment}/${cleanTitle}-${id}`;
+            history.pushState({ id: id, type: type, cleanTitle: cleanTitle }, cleanTitle, newUrl);
             fetchContentDetails(id, type);
         }
         
@@ -881,7 +885,8 @@
 
         // Fungsi untuk menampilkan halaman Film
         async function showMoviesPage() {
-            // Tidak lagi memanggil history.pushState di sini
+            // Perbarui URL ke halaman film
+            history.pushState({ page: 'movies' }, 'Film', `${BLOG_URL}film`);
             const content = document.getElementById('movie-content');
             content.innerHTML = ''; // Hapus konten lama
             
@@ -900,7 +905,8 @@
 
         // Fungsi untuk menampilkan halaman Acara TV
         async function showTvShowsPage() {
-            // Tidak lagi memanggil history.pushState di sini
+            // Perbarui URL ke halaman acara TV
+            history.pushState({ page: 'tv-shows' }, 'Acara TV', `${BLOG_URL}acara-tv`);
             const content = document.getElementById('movie-content');
             content.innerHTML = ''; // Hapus konten lama
             
@@ -925,7 +931,7 @@
 
             // Tambahkan event listener untuk navigasi
             document.getElementById('home-button').addEventListener('click', () => {
-                // Tidak lagi memanggil history.pushState di sini
+                history.pushState({ page: 'home' }, 'Beranda', BLOG_URL); // Gunakan URL absolut
                 showHomePage();
             });
             document.getElementById('movies-nav').addEventListener('click', showMoviesPage);
@@ -936,16 +942,61 @@
                 event.preventDefault();
                 const query = document.getElementById('search-input').value;
                 if (query.trim() !== '') {
-                    // Tidak lagi memanggil history.pushState di sini
+                    // Perbarui URL untuk hasil pencarian
+                    history.pushState({ page: 'search', query: query }, `Pencarian: ${query}`, `${BLOG_URL}cari/${encodeURIComponent(query)}`); // Gunakan URL absolut
                     performSearch(query.trim());
                 }
             });
 
-            // Listener popstate dihapus sepenuhnya karena tidak didukung di lingkungan ini
-            // window.addEventListener('popstate', (event) => { /* ... */ });
+            // Tangani navigasi maju/mundur browser
+            window.addEventListener('popstate', (event) => {
+                if (event.state) {
+                    // Jika ada state yang didorong oleh kita, gunakan itu
+                    if (event.state.page === 'home') {
+                        showHomePage();
+                    } else if (event.state.page === 'movies') {
+                        showMoviesPage();
+                    } else if (event.state.page === 'tv-shows') {
+                        showTvShowsPage();
+                    } else if (event.state.page === 'search') {
+                        performSearch(event.state.query);
+                    } else if (event.state.id && event.state.type) {
+                        // Ini adalah halaman detail film/acara TV
+                        fetchContentDetails(event.state.id, event.state.type);
+                    }
+                } else {
+                    // Jika tidak ada state, mungkin ini adalah pemuatan awal atau URL yang diketik langsung
+                    const path = window.location.pathname;
+                    const parts = path.split('/').filter(part => part !== ''); // Filter bagian kosong
+                    
+                    if (parts.length === 0 || parts[0] === 'index.html') { // Halaman utama
+                        showHomePage();
+                    } else if (parts[0] === 'film' && parts.length === 2) {
+                        const idPart = parts[1];
+                        const id = parseInt(idPart.split('-').pop());
+                        if (!isNaN(id)) {
+                            fetchContentDetails(id, 'movie');
+                        } else {
+                            showHomePage(); // Fallback jika ID tidak valid
+                        }
+                    } else if (parts[0] === 'acara-tv' && parts.length === 2) {
+                        const idPart = parts[1];
+                        const id = parseInt(idPart.split('-').pop());
+                        if (!isNaN(id)) {
+                            fetchContentDetails(id, 'tv');
+                        } else {
+                            showHomePage(); // Fallback jika ID tidak valid
+                        }
+                    } else if (parts[0] === 'cari' && parts.length === 2) {
+                        performSearch(decodeURIComponent(parts[1]));
+                    } else {
+                        showHomePage(); // Fallback untuk URL yang tidak dikenali
+                    }
+                }
+            });
 
-            // Panggil fungsi untuk memuat konten awal
-            showHomePage();
+            // Panggil penanganan popstate untuk memuat konten awal berdasarkan URL
+            window.dispatchEvent(new PopStateEvent('popstate', { state: null }));
         });
     </script>
 </body>
