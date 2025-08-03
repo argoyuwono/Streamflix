@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Judul Halaman Dinamis -->
-    <title>Streamflix Now - Film dan Acara Tv</title>
+    <title>Streamflix Now - Film dan Acara TV</title>
     
     <!-- Deskripsi Meta SEO -->
     <meta name="description" content="Temukan sinopsis, trailer, pemeran, dan detail film-film terbaru.">
@@ -147,7 +147,7 @@
                     <button id="tv-shows-nav" class="px-3 py-2 text-lg font-medium text-gray-700 hover:text-blue-500 transition-colors duration-200">Acara TV</button>
                 </nav>
 
-                <!-- Kotak pencarian dan tombol toggle tema -->
+                <!-- Kotak pencarian -->
                 <div class="flex items-center space-x-4 w-full md:w-auto">
                     <!-- Input pencarian -->
                     <form id="search-form" class="flex rounded-full bg-gray-200 overflow-hidden w-full">
@@ -158,8 +158,6 @@
                             </svg>
                         </button>
                     </form>
-
-                    <!-- Tombol untuk mengubah tema - DIHAPUS -->
                 </div>
             </div>
         </header>
@@ -661,14 +659,14 @@
                             </iframe>
                         </div>
                     ` : `
-                        <p class="text-center text-gray-500">Trailer tidak tersedia untuk film ini.</p>
+                        <p class="text-center text-gray-500">Trailer tidak tersedia untuk konten ini.</p>
                     `}
                 </div>
 
                 <!-- Bagian Ulasan Pengguna -->
                 <div class="mt-8">
                     <h3 class="text-2xl font-bold mb-4">Ulasan Pengguna</h3>
-                    ${reviewList || '<p class="text-center text-gray-500">Belum ada ulasan untuk film ini.</p>'}
+                    ${reviewList || '<p class="text-center text-gray-500">Belum ada ulasan untuk konten ini.</p>'}
                 </div>
             `;
 
@@ -689,7 +687,7 @@
         // Fungsi baru untuk memuat detail konten dan memperbarui URL
         function loadContentDetails(id, type, title) {
             const cleanTitle = cleanTitleForUrl(title);
-            const urlSegment = type === 'movie' ? 'film' : 'acara-tv';
+            const urlSegment = type === 'movie' ? 'film' : 'acara-tv'; // Mengubah segmen URL ke Bahasa Indonesia
             // Gunakan URL absolut untuk pushState
             const newUrl = `${BLOG_URL}${urlSegment}/${cleanTitle}-${id}`;
             history.pushState({ id: id, type: type, cleanTitle: cleanTitle }, cleanTitle, newUrl);
@@ -875,12 +873,20 @@
         function showHomePage() {
             const content = document.getElementById('movie-content');
             content.innerHTML = `
-                <h1 class="text-3xl font-bold text-center mb-4">Selamat datang di Streamflix Now!</h1>
+                <h1 id="welcome-title" class="text-3xl font-bold text-center mb-4 cursor-pointer">Selamat datang di Streamflix Now!</h1>
                 <p class="text-center text-lg text-gray-600">Jelajahi film dan acara TV terbaik dari seluruh dunia. Gunakan navigasi di atas untuk memulai.</p>
                 <div class="mt-8 flex justify-center">
                     <img src="https://live.staticflickr.com/65535/54695504172_16d8127e7b_b.jpg" alt="Selamat datang di Streamflix Now" class="rounded-xl shadow-lg w-full max-w-2xl h-auto">
                 </div>
             `;
+            // Tambahkan event listener untuk judul selamat datang yang dapat diklik
+            document.getElementById('welcome-title').addEventListener('click', handleWelcomeClick);
+        }
+
+        // Fungsi untuk menangani klik pada judul "Selamat datang di Streamflix Now!"
+        function handleWelcomeClick() {
+            history.pushState({ page: 'welcome' }, 'Selamat Datang', `${BLOG_URL}streamflix-now`);
+            showHomePage(); // Render ulang halaman utama
         }
 
         // Fungsi untuk menampilkan halaman Film
@@ -925,13 +931,12 @@
 
         // Logika utama saat halaman dimuat
         document.addEventListener('DOMContentLoaded', () => {
-            // Hapus preferensi tema yang disimpan dan logika tema gelap/terang
-            localStorage.removeItem('theme'); // Hapus tema yang disimpan jika ada
-            document.documentElement.classList.remove('dark'); // Pastikan tema gelap tidak diterapkan
+            // Pastikan tema gelap tidak diterapkan
+            document.documentElement.classList.remove('dark');
 
             // Tambahkan event listener untuk navigasi
             document.getElementById('home-button').addEventListener('click', () => {
-                history.pushState({ page: 'home' }, 'Beranda', BLOG_URL); // Gunakan URL absolut
+                history.pushState({ page: 'home' }, 'Beranda', `${BLOG_URL}beranda`); // Gunakan URL absolut
                 showHomePage();
             });
             document.getElementById('movies-nav').addEventListener('click', showMoviesPage);
@@ -943,7 +948,7 @@
                 const query = document.getElementById('search-input').value;
                 if (query.trim() !== '') {
                     // Perbarui URL untuk hasil pencarian
-                    history.pushState({ page: 'search', query: query }, `Pencarian: ${query}`, `${BLOG_URL}cari/${encodeURIComponent(query)}`); // Gunakan URL absolut
+                    history.pushState({ page: 'search', query: query }, `Pencarian: ${query}`, `${BLOG_URL}cari/${encodeURIComponent(query)}`); // Mengubah segmen URL ke Bahasa Indonesia
                     performSearch(query.trim());
                 }
             });
@@ -952,7 +957,7 @@
             window.addEventListener('popstate', (event) => {
                 if (event.state) {
                     // Jika ada state yang didorong oleh kita, gunakan itu
-                    if (event.state.page === 'home') {
+                    if (event.state.page === 'home' || event.state.page === 'welcome') { // Tangani kedua state home dan welcome
                         showHomePage();
                     } else if (event.state.page === 'movies') {
                         showMoviesPage();
@@ -969,9 +974,9 @@
                     const path = window.location.pathname;
                     const parts = path.split('/').filter(part => part !== ''); // Filter bagian kosong
                     
-                    if (parts.length === 0 || parts[0] === 'index.html') { // Halaman utama
+                    if (parts.length === 0 || parts[0] === 'index.html' || parts[0] === 'beranda' || parts[0] === 'streamflix-now') { // Tangani semua path terkait home
                         showHomePage();
-                    } else if (parts[0] === 'film' && parts.length === 2) {
+                    } else if (parts[0] === 'film' && parts.length === 2) { // Mengubah segmen URL ke Bahasa Indonesia
                         const idPart = parts[1];
                         const id = parseInt(idPart.split('-').pop());
                         if (!isNaN(id)) {
@@ -979,7 +984,7 @@
                         } else {
                             showHomePage(); // Fallback jika ID tidak valid
                         }
-                    } else if (parts[0] === 'acara-tv' && parts.length === 2) {
+                    } else if (parts[0] === 'acara-tv' && parts.length === 2) { // Mengubah segmen URL ke Bahasa Indonesia
                         const idPart = parts[1];
                         const id = parseInt(idPart.split('-').pop());
                         if (!isNaN(id)) {
@@ -987,7 +992,7 @@
                         } else {
                             showHomePage(); // Fallback jika ID tidak valid
                         }
-                    } else if (parts[0] === 'cari' && parts.length === 2) {
+                    } else if (parts[0] === 'cari' && parts.length === 2) { // Mengubah segmen URL ke Bahasa Indonesia
                         performSearch(decodeURIComponent(parts[1]));
                     } else {
                         showHomePage(); // Fallback untuk URL yang tidak dikenali
