@@ -11,19 +11,21 @@
 
     <!-- Tag Meta Open Graph (untuk Facebook) -->
     <meta property="og:site_name" content="Streamflix Now">
-    <meta property="og:title" content="Judul Film Placeholder">
-    <meta property="og:description" content="Deskripsi film placeholder">
+    <meta property="og:title" content="Streamflix Now - Film dan Acara TV"> <!-- Default title -->
+    <meta property="og:description" content="Temukan sinopsis, trailer, pemeran, dan detail film-film terbaru.">
     <meta property="og:url" content="https://streamflix-now.pages.dev/">
-    <meta property="og:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=Poster%20Film">
-    <meta property="og:type" content="video.movie">
+    <meta property="og:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=Streamflix%20Now">
+    <meta property="og:image:width" content="1200"> <!-- Default width for og:image -->
+    <meta property="og:image:height" content="630"> <!-- Default height for og:image -->
+    <meta property="og:type" content="website"> <!-- Changed to website as it's a general site -->
     <meta property="fb:app_id" content="100073133663144">
 
     <!-- Tag Meta Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@WatchStream123">
-    <meta name="twitter:title" content="Judul Film Placeholder">
-    <meta name="twitter:description" content="Deskripsi film placeholder">
-    <meta name="twitter:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=Poster%20Film">
+    <meta name="twitter:title" content="Streamflix Now - Film dan Acara TV"> <!-- Default title -->
+    <meta name="twitter:description" content="Temukan sinopsis, trailer, pemeran, dan detail film-film terbaru.">
+    <meta name="twitter:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=Streamflix%20Now">
 
     <!-- Favicon untuk browser -->
     <link rel="icon" href="https://placehold.co/32x32/000000/FFFFFF?text=SF" type="image/png">
@@ -232,6 +234,10 @@
             document.querySelector('meta[property="og:description"]').setAttribute('content', overview);
             document.querySelector('meta[property="og:url"]').setAttribute('content', url);
             document.querySelector('meta[property="og:image"]').setAttribute('content', `https://image.tmdb.org/t/p/w500${posterPath}`);
+            // Update image dimensions for specific content
+            document.querySelector('meta[property="og:image:width"]').setAttribute('content', '500');
+            document.querySelector('meta[property="og:image:height"]').setAttribute('content', '750'); // Common 2:3 aspect ratio for w500
+
             document.querySelector('meta[name="twitter:title"]').setAttribute('content', title);
             document.querySelector('meta[name="twitter:description"]').setAttribute('content', overview);
             document.querySelector('meta[name="twitter:image"]').setAttribute('content', `https://image.tmdb.org/t/p/w500${posterPath}`);
