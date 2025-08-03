@@ -10,7 +10,7 @@
     <meta name="description" content="Temukan sinopsis, trailer, pemeran, dan detail film-film terbaru.">
 
     <!-- Tag Meta Open Graph (untuk Facebook) -->
-    <meta property="og:site_name" content="Streamflix">
+    <meta property="og:site_name" content="Streamflix Now">
     <meta property="og:title" content="Judul Film Placeholder">
     <meta property="og:description" content="Deskripsi film placeholder">
     <meta property="og:url" content="https://streamflix-now.pages.dev/">
@@ -145,7 +145,7 @@
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
             <!-- Nama Blog (div) - Elemen penting untuk SEO -->
             <div id="home-button" class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-500 cursor-pointer">
-                Streamflix
+                Streamflix Now
             </div>
 
             <!-- Kontainer untuk navigasi dan pencarian, agar berdampingan -->
@@ -196,7 +196,7 @@
 
     <script>
         // Konfigurasi dasar untuk SEO dan media sosial
-        const BLOG_NAME = "Streamflix";
+        const BLOG_NAME = "Streamflix Now"; // Diperbarui
         const BLOG_URL = "https://streamflix-now.pages.dev/"; // Ganti dengan domain Anda
         // URL proxy API baru dari pengguna
         const TMDB_API_PROXY = `https://tmdb-api-proxy-1.musadekakhmad.workers.dev`;
@@ -736,7 +736,7 @@
                 }
 
                 // Render konten. Ambil 12 film pertama jika ini adalah halaman pertama.
-                const itemsToRender = page === 1 ? data.results.slice(0, 12) : data.results;
+                const itemsToRender = data.results ? (page === 1 ? data.results.slice(0, 12) : data.results) : []; // Perbaikan: Tambahkan pemeriksaan null/undefined
                 renderListItems(itemsToRender, type, endpoint);
                 
                 // Perbarui tombol "Muat Lebih Banyak"
@@ -879,10 +879,10 @@
         function showHomePage() {
             const content = document.getElementById('movie-content');
             content.innerHTML = `
-                <h1 class="text-3xl font-bold text-center mb-4">Selamat datang di Streamflix!</h1>
+                <h1 class="text-3xl font-bold text-center mb-4">Selamat datang di Streamflix Now!</h1>
                 <p class="text-center text-lg text-gray-600 dark:text-gray-400">Jelajahi film dan acara TV terbaik dari seluruh dunia. Gunakan navigasi di atas untuk memulai.</p>
                 <div class="mt-8 flex justify-center">
-                    <img src="https://placehold.co/800x400/2f3a47/ffffff?text=Streamflix" alt="Selamat datang di Streamflix" class="rounded-xl shadow-lg">
+                    <img src="https://placehold.co/800x400/2f3a47/ffffff?text=Streamflix Now" alt="Selamat datang di Streamflix Now" class="rounded-xl shadow-lg">
                 </div>
             `;
         }
