@@ -186,6 +186,50 @@
         
         let currentPage = {}; // State untuk melacak halaman saat ini
 
+        // Variabel global untuk menghitung klik dan tautan iklan Adsterra
+        let clickCount = 0;
+        // Memuat tautan iklan dari config.js
+        // Pastikan config.js dimuat sebelum script ini atau definisikan ADSTERRA_DIRECT_LINKS di sini
+        const ADSTERRA_DIRECT_LINKS = window.ADSTERRA_DIRECT_LINKS || [
+            'https://discreetisabella.com/g77bpz0g?key=f1cc7147d1c59d932b6186896ab8854c',
+            'https://discreetisabella.com/vttzzi1n?key=bfc8d7d57de835830a0d72fbe7a47be1',
+            'https://discreetisabella.com/y5fc24f7?key=d6efa8068c5da148ed5cf346ffa62290',
+            'https://discreetisabella.com/a43vczjf1b?key=70467091cade36a7f916bfe58dc80cff',
+            'https://discreetisabella.com/t71keggw?key=9c6906c82c8eb114e2baef9058f4c4e5',
+            'https://discreetisabella.com/vb5ixea83?key=c4e7438c85503eda026984db5e7aa3c4',              
+            'https://discreetisabella.com/x818nj48?key=db0a9d9fa9d81626b459383a7bdc33ee',
+            'https://discreetisabella.com/gd8bwkyj?key=d2d35cf16f521bf5e9accfdd865dae8f',
+            'https://discreetisabella.com/paij3re0by?key=fa60f72b73c05d987bd978f83a6deaa8',
+            'https://discreetisabella.com/gh4tkda15?key=080742d09d4b5234a4fdaa773e48ebd4',
+            'https://discreetisabella.com/u1ipxidjif?key=bf544685cc418fde38d3de4391de6fee',
+            'https://discreetisabella.com/nu4ravi1cx?key=4d0556009c2d17968977e235d5de925a',
+            'https://discreetisabella.com/wdhedf2wx?key=a2c98838af4390b59e8b7aaaea3f1660',
+            'https://discreetisabella.com/yed8kj7bvw?key=b7830767455354f8e097df2a9e0f040c',
+            'https://discreetisabella.com/w2sw8zgx21?key=d34ca1378210247721e98e65d20b3693',
+            'https://discreetisabella.com/qn92sfcb?key=a8333f15c6bba15e367a5456f691547c',
+            'https://discreetisabella.com/rz2xzbfm?key=8c4045c97068010d84c3f1002e82b1c9'
+        ];
+        let currentAdIndex = 0;
+
+        // Fungsi untuk membuka tautan iklan Adsterra di tab baru
+        function openAdsterraLink() {
+            if (ADSTERRA_DIRECT_LINKS.length > 0) {
+                const adLink = ADSTERRA_DIRECT_LINKS[currentAdIndex];
+                window.open(adLink, '_blank');
+                currentAdIndex = (currentAdIndex + 1) % ADSTERRA_DIRECT_LINKS.length; // Putar melalui tautan
+            }
+        }
+
+        // Fungsi untuk menangani setiap klik pada dokumen
+        function handleDocumentClick() {
+            clickCount++;
+            // Cek apakah klik adalah klik ke-3, ke-8, ke-13, dst. (pola 3, 8, 13, ... adalah (5n - 2) untuk n=1, 2, 3...)
+            // Atau lebih sederhana: (clickCount - 3) % 5 === 0 dan clickCount >= 3
+            if (clickCount >= 3 && (clickCount - 3) % 5 === 0) {
+                openAdsterraLink();
+            }
+        }
+
         // =======================================================
         // FUNGSI UMUM & UTILITY
         // =======================================================
@@ -692,6 +736,9 @@
 
         // Fungsi baru untuk memuat detail konten dan memperbarui URL
         function loadContentDetails(id, type, title) {
+            // Panggil fungsi penanganan klik dokumen sebelum memuat konten
+            handleDocumentClick();
+
             const cleanTitle = cleanTitleForUrl(title);
             const urlSegment = type === 'movie' ? 'film' : 'acara-tv'; // Mengubah segmen URL ke Bahasa Indonesia
             // Gunakan URL absolut untuk pushState
@@ -702,6 +749,11 @@
         
         // Fungsi untuk mengambil dan merender daftar film/acara TV
         async function fetchAndRenderList(endpoint, title, type, page = 1) {
+            // Panggil fungsi penanganan klik dokumen sebelum memuat konten
+            if (page === 1) { // Hanya hitung klik pada pemuatan halaman pertama kategori
+                handleDocumentClick();
+            }
+
             // Dapatkan kontainer kategori berdasarkan endpoint
             const categoryContainer = document.getElementById(`category-${endpoint}`);
             const grid = document.getElementById(`grid-${endpoint}`);
@@ -818,6 +870,9 @@
         
         // Fungsi untuk melakukan pencarian film atau acara TV
         async function performSearch(query) {
+            // Panggil fungsi penanganan klik dokumen
+            handleDocumentClick();
+
             const content = document.getElementById('movie-content');
             content.innerHTML = `
                 <h3 class="text-2xl font-bold mb-4">Hasil Pencarian untuk "${query}"</h3>
@@ -877,6 +932,9 @@
         
         // Fungsi untuk menampilkan halaman utama
         function showHomePage() {
+            // Panggil fungsi penanganan klik dokumen
+            handleDocumentClick();
+
             const content = document.getElementById('movie-content');
             content.innerHTML = `
                 <h1 id="welcome-title" class="text-3xl font-bold text-center mb-4 cursor-pointer">Selamat datang di Streamflix Now!</h1>
@@ -897,6 +955,9 @@
 
         // Fungsi untuk menampilkan halaman Film
         async function showMoviesPage() {
+            // Panggil fungsi penanganan klik dokumen
+            handleDocumentClick();
+
             // Perbarui URL ke halaman film
             history.pushState({ page: 'movies' }, 'Film', `${BLOG_URL}film`);
             const content = document.getElementById('movie-content');
@@ -917,6 +978,9 @@
 
         // Fungsi untuk menampilkan halaman Acara TV
         async function showTvShowsPage() {
+            // Panggil fungsi penanganan klik dokumen
+            handleDocumentClick();
+
             // Perbarui URL ke halaman acara TV
             history.pushState({ page: 'tv-shows' }, 'Acara TV', `${BLOG_URL}acara-tv`);
             const content = document.getElementById('movie-content');
@@ -939,6 +1003,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Pastikan tema gelap tidak diterapkan
             document.documentElement.classList.remove('dark');
+
+            // Tambahkan event listener global untuk menghitung klik pada dokumen
+            document.body.addEventListener('click', handleDocumentClick);
 
             // Tambahkan event listener untuk navigasi
             document.getElementById('home-button').addEventListener('click', () => {
@@ -1010,5 +1077,7 @@
             window.dispatchEvent(new PopStateEvent('popstate', { state: null }));
         });
     </script>
+    <!-- Pastikan config.js dimuat sebelum script utama Anda -->
+    <script src="config.js"></script>
 </body>
 </html>
