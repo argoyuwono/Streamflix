@@ -112,7 +112,7 @@
             color: white;
             padding: 1.5rem;
             border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
             z-index: 100;
             max-width: 80%;
             text-align: center;
@@ -179,8 +179,8 @@
 
     <script>
         // Konfigurasi dasar untuk SEO dan media sosial
-        const BLOG_NAME = "Streamflix Now"; // Diperbarui
-        const BLOG_URL = "https://streamflix-now.pages.dev/"; // Ganti dengan domain Anda
+        const BLOG_NAME = "Streamflix Now";
+        const BLOG_URL = "https://streamflix-now.pages.dev/"; // Tetap URL absolut untuk meta tags
         // URL proxy API baru dari pengguna
         const TMDB_API_PROXY = `https://tmdb-api-proxy-1.musadekakhmad.workers.dev`;
         
@@ -206,15 +206,27 @@
             };
         }
 
-        // FUNGSI TOGGLE TEMA DIHAPUS
-        // FUNGSI UPDATE IKON TEMA DIHAPUS
+        // Fungsi untuk membersihkan judul agar sesuai untuk URL
+        function cleanTitleForUrl(title) {
+            return title.toLowerCase()
+                        .replace(/[^a-z0-9\s-]/g, '') // Hapus karakter non-alfanumerik kecuali spasi dan tanda hubung
+                        .replace(/\s+/g, '-')       // Ganti spasi dengan tanda hubung
+                        .replace(/^-+|-+$/g, '');   // Hapus tanda hubung dari awal/akhir
+        }
+
+        // Fungsi untuk meng-escape tanda kutip tunggal untuk atribut HTML
+        function escapeSingleQuotes(text) {
+            return text.replace(/'/g, "\\'");
+        }
 
         // Fungsi untuk memperbarui tag meta SEO dan media sosial
-        function updateMetaTags(data, type) {
+        function updateMetaTags(data, type, cleanTitle) {
             const title = type === 'movie' ? data.title : data.name;
             const overview = data.overview;
             const posterPath = data.poster_path;
-            const url = `${BLOG_URL}/${type}/${data.id}`;
+            const urlSegment = type === 'movie' ? 'film' : 'acara-tv';
+            // Gunakan BLOG_URL untuk URL absolut di meta tags
+            const url = `${BLOG_URL}${urlSegment}/${cleanTitle}-${data.id}`;
 
             document.title = `${title} - ${BLOG_NAME}`;
             document.querySelector('meta[name="description"]').setAttribute('content', overview);
@@ -228,7 +240,7 @@
         }
         
         // Fungsi untuk menghasilkan JSON-LD (Data Terstruktur)
-        function generateJsonLd(item, type, credits) {
+        function generateJsonLd(item, type, credits, cleanTitle) {
             const ldScript = document.querySelector('script[type="application/ld+json"]');
             if (ldScript) {
                 ldScript.remove();
@@ -243,13 +255,15 @@
                 "url": `https://www.themoviedb.org/person/${actor.id}`
             })) : [];
             const genres = item.genres ? item.genres.map(genre => genre.name) : []; 
+            const urlSegment = type === 'movie' ? 'film' : 'acara-tv';
 
             const jsonLdData = {
                 "@context": "https://schema.org",
                 "@type": schemaType,
                 "name": item.title || item.name,
                 "description": item.overview,
-                "url": `${BLOG_URL}/${type}/${item.id}`,
+                // Gunakan BLOG_URL untuk URL absolut di JSON-LD
+                "url": `${BLOG_URL}${urlSegment}/${cleanTitle}-${item.id}`,
                 "image": `https://image.tmdb.org/t/p/original${item.poster_path}`,
                 "datePublished": item.release_date || item.first_air_date,
                 "director": director ? { "@type": "Person", "name": director.name } : null,
@@ -397,8 +411,10 @@
                 const releaseDatesData = releaseDatesResponse.ok ? await releaseDatesResponse.json() : { results: [] };
                 const reviewsData = reviewsResponse.ok ? await reviewsResponse.json() : { results: [] };
                 
-                updateMetaTags(detailsData, type);
-                generateJsonLd(detailsData, type, creditsData);
+                // Generate clean title for meta tags and JSON-LD
+                const cleanTitle = cleanTitleForUrl(detailsData.title || detailsData.name);
+                updateMetaTags(detailsData, type, cleanTitle);
+                generateJsonLd(detailsData, type, creditsData, cleanTitle);
                 renderDetails(detailsData, videosData, creditsData, releaseDatesData, reviewsData, type);
             } catch (error) {
                 console.error("Gagal memuat data:", error);
@@ -658,13 +674,22 @@
 
             // Tambahkan event listener untuk tombol baru
             document.getElementById('share-button').onclick = () => {
-                const url = window.location.href;
-                copyToClipboard(url);
+                // Gunakan BLOG_URL untuk URL yang disalin
+                const cleanTitle = cleanTitleForUrl(item.title || item.name);
+                const urlSegment = type === 'movie' ? 'film' : 'acara-tv';
+                const shareUrl = `${BLOG_URL}${urlSegment}/${cleanTitle}-${item.id}`;
+                copyToClipboard(shareUrl);
             };
 
             document.getElementById('watchlist-button').onclick = () => {
                 showMessage(`Fitur "Tambahkan ke Daftar Tonton" untuk "${title}" akan segera tersedia!`);
             };
+        }
+
+        // Fungsi baru untuk memuat detail konten (tanpa memperbarui URL browser)
+        function loadContentDetails(id, type, title) {
+            // Tidak lagi memanggil history.pushState di sini
+            fetchContentDetails(id, type);
         }
         
         // Fungsi untuk mengambil dan merender daftar film/acara TV
@@ -747,8 +772,10 @@
                     https://image.tmdb.org/t/p/w500${item.poster_path} 500w
                 `;
                 const titleText = item.title || item.name;
+                const escapedTitleText = escapeSingleQuotes(titleText); // Gunakan fungsi escape baru di sini
+
                 const cardHtml = `
-                    <div class="movie-card bg-gray-200 rounded-lg overflow-hidden shadow-md" onclick="fetchContentDetails(${item.id}, '${type}')">
+                    <div class="movie-card bg-gray-200 rounded-lg overflow-hidden shadow-md" onclick="loadContentDetails(${item.id}, '${type}', '${escapedTitleText}')">
                         <img class="w-full h-auto object-cover lazy"
                              data-src="${posterUrl}"
                              srcset="${posterSrcset}"
@@ -854,6 +881,7 @@
 
         // Fungsi untuk menampilkan halaman Film
         async function showMoviesPage() {
+            // Tidak lagi memanggil history.pushState di sini
             const content = document.getElementById('movie-content');
             content.innerHTML = ''; // Hapus konten lama
             
@@ -872,6 +900,7 @@
 
         // Fungsi untuk menampilkan halaman Acara TV
         async function showTvShowsPage() {
+            // Tidak lagi memanggil history.pushState di sini
             const content = document.getElementById('movie-content');
             content.innerHTML = ''; // Hapus konten lama
             
@@ -895,21 +924,28 @@
             document.documentElement.classList.remove('dark'); // Pastikan tema gelap tidak diterapkan
 
             // Tambahkan event listener untuk navigasi
-            document.getElementById('home-button').addEventListener('click', showHomePage);
+            document.getElementById('home-button').addEventListener('click', () => {
+                // Tidak lagi memanggil history.pushState di sini
+                showHomePage();
+            });
             document.getElementById('movies-nav').addEventListener('click', showMoviesPage);
             document.getElementById('tv-shows-nav').addEventListener('click', showTvShowsPage);
             
-            // Tampilkan halaman utama saat pemuatan awal
-            showHomePage();
-
             // Tambahkan event listener untuk formulir pencarian
             document.getElementById('search-form').addEventListener('submit', (event) => {
                 event.preventDefault();
                 const query = document.getElementById('search-input').value;
                 if (query.trim() !== '') {
+                    // Tidak lagi memanggil history.pushState di sini
                     performSearch(query.trim());
                 }
             });
+
+            // Listener popstate dihapus sepenuhnya karena tidak didukung di lingkungan ini
+            // window.addEventListener('popstate', (event) => { /* ... */ });
+
+            // Panggil fungsi untuk memuat konten awal
+            showHomePage();
         });
     </script>
 </body>
